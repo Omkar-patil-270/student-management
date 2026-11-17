@@ -30,9 +30,10 @@ RUN chown -R appuser:appgroup /app
 USER appuser
 
 # Expose standard web port
-EXPOSE 8080
+EXPOSE 8081
 
 # Environment variables
+ENV PORT=8081
 ENV JAVA_OPTS="-Xms256m -Xmx512m"
 
 # Application entrypoint

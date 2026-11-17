@@ -91,7 +91,7 @@ chmod +x mvnw
 ./mvnw spring-boot:run
 ```
 
-The application will start on: **`http://localhost:8080`**
+The application will start on: **`http://localhost:8081`**
 
 ---
 
@@ -104,7 +104,7 @@ Run directly with Docker without needing local Java or Maven installations:
 docker build -t student-management:latest .
 
 # Run the container
-docker run -d -p 8080:8080 --name student-management-app student-management:latest
+docker run -d -p 8081:8081 --name student-management-app student-management:latest
 ```
 
 ---
@@ -124,7 +124,7 @@ docker compose down
 ## 🗄️ H2 Database Console
 
 Access the built-in database console to inspect SQL tables:
-- **URL**: [http://localhost:8080/h2-console](http://localhost:8080/h2-console)
+- **URL**: [http://localhost:8081/h2-console](http://localhost:8081/h2-console)
 - **JDBC URL**: `jdbc:h2:mem:studentdb`
 - **User Name**: `sa`
 - **Password**: *(leave blank)*
