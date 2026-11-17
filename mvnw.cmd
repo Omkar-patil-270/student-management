@@ -47,6 +47,10 @@ set "MAVEN_HOME=%~dp0"
 
 @REM ==== START VALIDATION ====
 if not "%JAVA_HOME%"=="" goto OkJHome
+if exist "C:\Program Files\Java\jdk-21.0.12.1" set "JAVA_HOME=C:\Program Files\Java\jdk-21.0.12.1"
+if not "%JAVA_HOME%"=="" goto OkJHome
+if exist "C:\Program Files\Java\latest" set "JAVA_HOME=C:\Program Files\Java\latest"
+if not "%JAVA_HOME%"=="" goto OkJHome
 for %%i in (java.exe) do set "JAVACMD=%%~$PATH:i"
 if not "%JAVACMD%"=="" goto checkJCmd
 
