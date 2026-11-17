@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --brand-primary: #2563eb;
+            --brand-dark: #0f172a;
+            --bg-canvas: #f8fafc;
+        }
+        body {
+            background-color: var(--bg-canvas);
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #334155;
+        }
+        .navbar-custom {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+        }
+        .card-stat {
+            border: none;
+            border-radius: 14px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card-stat:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+        }
+        .table-custom {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+        .table-custom thead {
+            background-color: #f1f5f9;
+            color: #475569;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .avatar-circle {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #e0e7ff;
+            color: #3730a3;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        .badge-dept {
+            background-color: #e0f2fe;
+            color: #0369a1;
+            font-weight: 500;
+            padding: 0.35rem 0.65rem;
+            border-radius: 6px;
+        }
+        .btn-action {
+            padding: 0.25rem 0.55rem;
+            font-size: 0.825rem;
+            border-radius: 6px;
+        }
+        .chrome-pill {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            color: #ffffff;
+            font-size: 0.825rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom py-3 mb-4">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="#">
+                <i class="bi bi-mortarboard-fill fs-3 text-warning"></i>
+                <span>Student Management System</span>
+            </a>
+            <div class="d-flex align-items-center gap-2">
+                <span class="chrome-pill d-inline-flex align-items-center gap-2">
+                    <i class="bi bi-browser-chrome text-warning"></i>
+                    <span>Storage: Chrome LocalStorage</span>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container pb-5">
+
+        <!-- Storage Status Alert Banner -->
+        <div class="alert alert-primary bg-white border shadow-sm rounded-3 py-2 px-3 mb-4 d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <div class="d-flex align-items-center gap-2 small">
+                <i class="bi bi-info-circle-fill text-primary fs-5"></i>
+                <span>All student records are stored <strong>directly in your Chrome browser</strong> (`localStorage`). No external database is needed!</span>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onclick="resetToDemoData()">
+                    <i class="bi bi-arrow-clockwise me-1"></i> Reload Demo Data
+                </button>
+                <button class="btn btn-sm btn-outline-danger" onclick="clearAllData()">
+                    <i class="bi bi-trash3 me-1"></i> Clear Storage
+                </button>
+            </div>
+        </div>
+
+        <!-- Metric Stat Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-12 col-md-4">
+                <div class="card card-stat bg-white shadow-sm p-3">
+                    <div class="d-flex align-items-center">
+                        <div class="p-3 rounded-3 bg-primary bg-opacity-10 text-primary me-3">
+                            <i class="bi bi-people-fill fs-3"></i>
+                        </div>
+                        <div>
+                            <div class="text-muted small text-uppercase fw-semibold">Total Students</div>
+                            <h3 class="fw-bold mb-0 text-dark" id="statTotalStudents">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="card card-stat bg-white shadow-sm p-3">
+                    <div class="d-flex align-items-center">
+                        <div class="p-3 rounded-3 bg-success bg-opacity-10 text-success me-3">
+                            <i class="bi bi-graph-up-arrow fs-3"></i>
+                        </div>
+                        <div>
+                            <div class="text-muted small text-uppercase fw-semibold">Average GPA</div>
+                            <h3 class="fw-bold mb-0 text-success" id="statAvgGpa">0.00</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="card card-stat bg-white shadow-sm p-3">
+                    <div class="d-flex align-items-center">
+                        <div class="p-3 rounded-3 bg-info bg-opacity-10 text-info me-3">
+                            <i class="bi bi-hdd-network fs-3"></i>
+                        </div>
+                        <div>
+                            <div class="text-muted small text-uppercase fw-semibold">Persistence</div>
+                            <h4 class="fw-bold mb-0 text-dark">Chrome Direct</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Card -->
+        <div class="card shadow-sm border-0 rounded-4 bg-white overflow-hidden">
+            <div class="card-body p-4">
+
+                <!-- Controls: Live Search & Add Student Button -->
+                <div class="row g-3 align-items-center mb-4">
+                    <div class="col-12 col-md-7">
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0">
+                                <i class="bi bi-search text-muted"></i>
+                            </span>
+                            <input type="text" id="searchInput" oninput="handleSearch()"
+                                   class="form-control bg-light border-start-0"
+                                   placeholder="Live search by student name, email, or department...">
+                            <button class="btn btn-outline-secondary" type="button" onclick="clearSearch()" title="Clear filter">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-5 text-md-end">
+                        <button class="btn btn-primary d-inline-flex align-items-center gap-2 px-3 py-2 rounded-3 shadow-sm"
+                                data-bs-toggle="modal" data-bs-target="#studentModal" onclick="openAddModal()">
+                            <i class="bi bi-person-plus-fill"></i>
+                            <span class="fw-medium">Add New Student</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Students Table -->
+                <div class="table-responsive table-custom">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th class="ps-3" style="width: 70px;">ID</th>
+                                <th>Student</th>
+                                <th>Email</th>
+                                <th>Department</th>
+                                <th>GPA</th>
+                                <th>Phone</th>
+                                <th class="text-end pe-4" style="width: 150px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentTableBody">
+                            <!-- Populated dynamically from Chrome localStorage -->
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-5 text-center text-muted small">
+            <p class="mb-1">Java Web Application &bull; Packaged with Docker &bull; Client Storage in Chrome</p>
+            <p class="text-secondary opacity-75">Spring Boot &bull; Java 21 &bull; Thymeleaf</p>
+        </footer>
+
+    </div>
+
+    <!-- Student Add / Edit Modal -->
+    <div class="modal fade" id="studentModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 border-0 shadow">
+                <div class="modal-header border-bottom pb-3">
+                    <h5 class="modal-title fw-bold" id="modalTitle">Add Student</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="studentForm" onsubmit="saveStudent(event)">
+                    <div class="modal-body p-4">
+                        <input type="hidden" id="studentId">
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-6">
+                                <label for="firstName" class="form-label small fw-semibold text-uppercase text-secondary">First Name *</label>
+                                <input type="text" id="firstName" class="form-control" placeholder="e.g. Alex" required>
+                            </div>
+                            <div class="col-6">
+                                <label for="lastName" class="form-label small fw-semibold text-uppercase text-secondary">Last Name *</label>
+                                <input type="text" id="lastName" class="form-control" placeholder="e.g. Morgan" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label small fw-semibold text-uppercase text-secondary">Email Address *</label>
+                            <input type="email" id="email" class="form-control" placeholder="e.g. alex.morgan@university.edu" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="department" class="form-label small fw-semibold text-uppercase text-secondary">Department / Major *</label>
+                            <select id="department" class="form-select" required>
+                                <option value="" disabled selected>-- Select Department --</option>
+                                <option value="Computer Science">Computer Science</option>
+                                <option value="Software Engineering">Software Engineering</option>
+                                <option value="Data Science">Data Science</option>
+                                <option value="Electrical Engineering">Electrical Engineering</option>
+                                <option value="Business Analytics">Business Analytics</option>
+                                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                                <option value="Information Systems">Information Systems</option>
+                            </select>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <label for="gpa" class="form-label small fw-semibold text-uppercase text-secondary">GPA (0.0 - 4.0) *</label>
+                                <input type="number" step="0.01" min="0" max="4" id="gpa" class="form-control" placeholder="3.75" required>
+                            </div>
+                            <div class="col-6">
+                                <label for="phone" class="form-label small fw-semibold text-uppercase text-secondary">Phone</label>
+                                <input type="tel" id="phone" class="form-control" placeholder="+1 555-0100">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top pt-3">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary px-4" id="saveButton">Save Student</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Chrome LocalStorage Script -->
+    <script>
+        const STORAGE_KEY = 'student_management_records';
+
+        const DEFAULT_STUDENTS = [
+            { id: 1, firstName: "Alex", lastName: "Morgan", email: "alex.morgan@university.edu", department: "Computer Science", gpa: 3.85, phone: "+1 555-0101" },
+            { id: 2, firstName: "Sophia", lastName: "Chen", email: "sophia.chen@university.edu", department: "Data Science", gpa: 3.92, phone: "+1 555-0102" },
+            { id: 3, firstName: "Marcus", lastName: "Johnson", email: "marcus.j@university.edu", department: "Electrical Engineering", gpa: 3.65, phone: "+1 555-0103" },
+            { id: 4, firstName: "Emma", lastName: "Watson", email: "emma.watson@university.edu", department: "Business Analytics", gpa: 3.78, phone: "+1 555-0104" },
+            { id: 5, firstName: "Liam", lastName: "Davis", email: "liam.davis@university.edu", department: "Software Engineering", gpa: 3.40, phone: "+1 555-0105" }
+        ];
+
+        // Retrieve students from Chrome's localStorage
+        function getStudents() {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) {
+                // Initialize default demo data on first visit
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_STUDENTS));
+                return DEFAULT_STUDENTS;
+            }
+            try {
+                return JSON.parse(raw);
+            } catch (e) {
+                return [];
+            }
+        }
+
+        // Save students directly to Chrome's localStorage
+        function setStudents(students) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(students));
+            renderTable();
+        }
+
+        function renderTable(filterKeyword = '') {
+            const allStudents = getStudents();
+            const keyword = filterKeyword.trim().toLowerCase();
+
+            const filtered = keyword ? allStudents.filter(s =>
+                s.firstName.toLowerCase().includes(keyword) ||
+                s.lastName.toLowerCase().includes(keyword) ||
+                s.email.toLowerCase().includes(keyword) ||
+                s.department.toLowerCase().includes(keyword)
+            ) : allStudents;
+
+            // Update stats
+            document.getElementById('statTotalStudents').textContent = allStudents.length;
+            const avg = allStudents.length ? (allStudents.reduce((acc, s) => acc + parseFloat(s.gpa || 0), 0) / allStudents.length).toFixed(2) : '0.00';
+            document.getElementById('statAvgGpa').textContent = avg;
+
+            const tbody = document.getElementById('studentTableBody');
+            tbody.innerHTML = '';
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center py-5">
+                            <i class="bi bi-folder-x fs-1 text-muted opacity-50 mb-2 d-block"></i>
+                            <h6 class="fw-semibold text-dark">No students found</h6>
+                            <p class="text-muted small mb-0">No records matching your search in Chrome storage.</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            filtered.forEach(student => {
+                const initials = (student.firstName.charAt(0) + student.lastName.charAt(0)).toUpperCase();
+                const gpaBadgeClass = student.gpa >= 3.5 ? 'bg-success-subtle text-success border border-success-subtle' :
+                                      student.gpa >= 3.0 ? 'bg-primary-subtle text-primary border border-primary-subtle' :
+                                                           'bg-warning-subtle text-warning border border-warning-subtle';
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="ps-3 text-muted fw-semibold">#${student.id}</td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="avatar-circle">${initials}</div>
+                            <span class="fw-semibold text-dark">${student.firstName} ${student.lastName}</span>
+                        </div>
+                    </td>
+                    <td><span class="text-secondary">${student.email}</span></td>
+                    <td><span class="badge-dept">${student.department}</span></td>
+                    <td><span class="badge ${gpaBadgeClass}">${parseFloat(student.gpa).toFixed(2)}</span></td>
+                    <td><span class="text-muted small">${student.phone || '—'}</span></td>
+                    <td class="text-end pe-3">
+                        <div class="btn-group">
+                            <button class="btn btn-sm btn-outline-primary btn-action" onclick="openEditModal(${student.id})">
+                                <i class="bi bi-pencil-square"></i> Edit
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger btn-action" onclick="deleteStudent(${student.id})">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Live Search Handler
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value;
+            renderTable(query);
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            renderTable();
+        }
+
+        // Open modal for adding
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = 'Add Student';
+            document.getElementById('saveButton').textContent = 'Save Student';
+            document.getElementById('studentId').value = '';
+            document.getElementById('studentForm').reset();
+            document.getElementById('gpa').value = '3.50';
+        }
+
+        // Open modal for editing
+        function openEditModal(id) {
+            const students = getStudents();
+            const student = students.find(s => s.id === id);
+            if (!student) return;
+
+            document.getElementById('modalTitle').textContent = 'Edit Student #' + id;
+            document.getElementById('saveButton').textContent = 'Update Student';
+            document.getElementById('studentId').value = student.id;
+            document.getElementById('firstName').value = student.firstName;
+            document.getElementById('lastName').value = student.lastName;
+            document.getElementById('email').value = student.email;
+            document.getElementById('department').value = student.department;
+            document.getElementById('gpa').value = student.gpa;
+            document.getElementById('phone').value = student.phone || '';
+
+            const modal = new bootstrap.Modal(document.getElementById('studentModal'));
+            modal.show();
+        }
+
+        // Save or Update Student
+        function saveStudent(event) {
+            event.preventDefault();
+            const idVal = document.getElementById('studentId').value;
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const department = document.getElementById('department').value;
+            const gpa = parseFloat(document.getElementById('gpa').value);
+            const phone = document.getElementById('phone').value.trim();
+
+            const students = getStudents();
+
+            if (idVal) {
+                // Update
+                const id = parseInt(idVal);
+                const index = students.findIndex(s => s.id === id);
+                if (index !== -1) {
+                    students[index] = { id, firstName, lastName, email, department, gpa, phone };
+                }
+            } else {
+                // Add new
+                const newId = students.length > 0 ? Math.max(...students.map(s => s.id)) + 1 : 1;
+                students.push({ id: newId, firstName, lastName, email, department, gpa, phone });
+            }
+
+            setStudents(students);
+            bootstrap.Modal.getInstance(document.getElementById('studentModal')).hide();
+        }
+
+        // Delete Student
+        function deleteStudent(id) {
+            if (confirm(`Are you sure you want to delete student #${id}?`)) {
+                const students = getStudents().filter(s => s.id !== id);
+                setStudents(students);
+            }
+        }
+
+        // Reset to default sample records
+        function resetToDemoData() {
+            if (confirm("Reset records back to initial sample students?")) {
+                setStudents(DEFAULT_STUDENTS);
+            }
+        }
+
+        // Clear all records
+        function clearAllData() {
+            if (confirm("Clear all student data stored in your Chrome browser?")) {
+                setStudents([]);
+            }
+        }
+
+        // Initial Load on page open
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTable();
+        });
+    </script>
+</body>
+</html>

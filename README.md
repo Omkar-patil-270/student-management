@@ -1,21 +1,22 @@
 # 🎓 Student Management System
 
-A production-ready, full-stack Java web application built with **Spring Boot 3**, **Java 21**, **Thymeleaf**, **Bootstrap 5**, and **H2 In-Memory Database**, fully containerized using **Docker** multi-stage builds.
+A Java-based web application built with **Spring Boot 3**, **Java 21**, **Thymeleaf**, and **Bootstrap 5**, fully containerized using **Docker** and maintaining student data **directly in the client's browser (Google Chrome `localStorage`)**.
 
 ---
 
 ## ✨ Features
 
 - **CRUD Operations**:
-  - ➕ **Add Student**: Register students with first name, last name, email, department, GPA, and phone number.
-  - 📋 **View Students**: Responsive table layout with initials avatar, department badge, and status indicators.
-  - ✏️ **Edit / Update**: Modify existing student profiles with pre-filled inputs and validation checks.
+  - ➕ **Add Student**: Add students with name, email, department, GPA, and phone number.
+  - 📋 **View Students**: Responsive table layout with initials avatar, department badge, and GPA indicators.
+  - ✏️ **Edit / Update**: Modify existing student profiles with pre-filled inputs.
   - 🗑️ **Delete Student**: Delete records with confirmation prompt.
-  - 🔍 **Live Search**: Search students dynamically by first name, last name, email, or department.
-- **Data Validation**: Client & server-side validation (`@NotBlank`, `@Email`, `@DecimalMin`, `@DecimalMax`).
-- **In-Memory H2 Database**: Instant setup with automatic sample data seeding upon startup.
-- **Embedded H2 Web Console**: Inspect database tables directly in your browser.
-- **Dockerized**: Lightweight multi-stage Alpine Docker image (~180MB) running as a non-root user.
+  - 🔍 **Real-Time Live Search**: Instant search filtering as you type across first name, last name, email, or department.
+- **Client-Side Persistence**:
+  - Stored directly in **Google Chrome's `localStorage`**.
+  - **No external database required**: zero database configuration, zero SQL setup.
+  - Data persists across page reloads and browser sessions.
+- **Dockerized**: Multi-stage Alpine Docker image (~150MB) running as a non-root user.
 
 ---
 
@@ -24,12 +25,11 @@ A production-ready, full-stack Java web application built with **Spring Boot 3**
 | Component | Technology |
 | :--- | :--- |
 | **Language** | Java 21 (LTS) |
-| **Framework** | Spring Boot 3.2.5 |
-| **Web & Templating** | Spring MVC, Thymeleaf |
-| **Styling & Icons** | Bootstrap 5.3, Bootstrap Icons |
-| **Persistence** | Spring Data JPA, Hibernate |
-| **Database** | H2 Database (in-memory) |
-| **Build Tool** | Apache Maven & Maven Wrapper |
+| **Backend Framework** | Spring Boot 3.2.5 (Spring MVC) |
+| **Templating** | Thymeleaf |
+| **Frontend Styling** | Bootstrap 5.3, Bootstrap Icons |
+| **Data Storage** | Chrome Browser `localStorage` (Direct Client Storage) |
+| **Build Tool** | Apache Maven & Maven Wrapper (`mvnw`) |
 | **Containerization** | Docker, Docker Compose |
 | **Version Control** | Git |
 
@@ -44,24 +44,15 @@ student-management/
 │   ├── main/
 │   │   ├── java/com/example/studentmanagement/
 │   │   │   ├── controller/
-│   │   │   │   └── StudentController.java       # HTTP request mapping & view binding
-│   │   │   ├── entity/
-│   │   │   │   └── Student.java                 # JPA Entity & validation rules
-│   │   │   ├── repository/
-│   │   │   │   └── StudentRepository.java       # Data access with custom JPQL queries
-│   │   │   ├── service/
-│   │   │   │   ├── StudentService.java          # Service interface
-│   │   │   │   └── impl/StudentServiceImpl.java # Business logic & transaction management
-│   │   │   └── StudentManagementApplication.java # Spring Boot entrypoint & seed data runner
+│   │   │   │   └── StudentController.java        # Web MVC controller
+│   │   │   └── StudentManagementApplication.java # Spring Boot application entrypoint
 │   │   └── resources/
 │   │       ├── templates/
-│   │       │   ├── students.html                # Main list, dashboard stats & search
-│   │       │   ├── create-student.html          # Add student form
-│   │       │   └── edit-student.html            # Edit student form
-│   │       └── application.properties           # Spring & H2 configurations
+│   │       │   └── index.html                    # Dashboard UI + Chrome LocalStorage CRUD
+│   │       └── application.properties            # Clean web configuration
 │   └── test/
 │       └── java/com/example/studentmanagement/
-│           └── StudentManagementApplicationTests.java # Unit & integration tests
+│           └── StudentManagementApplicationTests.java # Context load test
 ├── .dockerignore
 ├── .gitignore
 ├── docker-compose.yml
@@ -78,11 +69,11 @@ student-management/
 
 ### 1. Run Locally with Maven Wrapper
 
-Ensure Java 21 is installed and available on your PATH.
+Ensure Java 21 is installed.
 
 **On Windows (CMD / PowerShell):**
 ```bash
-./mvnw.cmd spring-boot:run
+.\mvnw.cmd spring-boot:run
 ```
 
 **On Linux / macOS:**
@@ -91,13 +82,11 @@ chmod +x mvnw
 ./mvnw spring-boot:run
 ```
 
-The application will start on: **`http://localhost:8081`**
+Open Google Chrome at: **`http://localhost:8081`**
 
 ---
 
 ### 2. Run with Docker
-
-Run directly with Docker without needing local Java or Maven installations:
 
 ```bash
 # Build the Docker image
@@ -107,35 +96,9 @@ docker build -t student-management:latest .
 docker run -d -p 8081:8081 --name student-management-app student-management:latest
 ```
 
----
-
-### 3. Run with Docker Compose
-
+Or with Docker Compose:
 ```bash
 docker compose up --build
-```
-To stop the application:
-```bash
-docker compose down
-```
-
----
-
-## 🗄️ H2 Database Console
-
-Access the built-in database console to inspect SQL tables:
-- **URL**: [http://localhost:8081/h2-console](http://localhost:8081/h2-console)
-- **JDBC URL**: `jdbc:h2:mem:studentdb`
-- **User Name**: `sa`
-- **Password**: *(leave blank)*
-
----
-
-## 🧪 Running Tests
-
-To run the automated integration tests:
-```bash
-./mvnw.cmd test
 ```
 
 ---

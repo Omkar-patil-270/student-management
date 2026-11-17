@@ -12,7 +12,7 @@
 	<artifactId>student-management</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>student-management</name>
-	<description>Student Management System using Spring Boot 3, Thymeleaf, H2, and Docker</description>
+	<description>Java Web Application packaged with Docker - Chrome LocalStorage</description>
 
 	<properties>
 		<java.version>21</java.version>
@@ -22,38 +22,19 @@
 	</properties>
 
 	<dependencies>
-		<!-- Spring Boot Starter Web -->
+		<!-- Spring Boot Web Starter -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
-		<!-- Spring Boot Starter Data JPA -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
-
-		<!-- Spring Boot Starter Thymeleaf -->
+		<!-- Thymeleaf Template Engine -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
 
-		<!-- Spring Boot Starter Validation -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-validation</artifactId>
-		</dependency>
-
-		<!-- In-Memory H2 Database -->
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-
-		<!-- Spring Boot Starter Test -->
+		<!-- Test Starter -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
